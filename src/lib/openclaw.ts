@@ -115,57 +115,13 @@ export async function getAIResponse(
   } catch (error) {
     console.error('OpenClaw integration error:', error);
     
-    // Fallback to direct OpenAI call if gateway fails
-    return await getDirectAIResponse(message, persona);
+    // No fallback - gateway is required (uses Claude subscription)
+    return {
+      success: false,
+      error: `Gateway error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    };
   }
 }
 
-/**
- * Direct Anthropic Claude fallback when gateway is unavailable
- */
-async function getDirectAIResponse(message: string, persona: Persona): Promise<ChatResponse> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  
-  if (!apiKey) {
-    return {
-      success: false,
-      error: 'No AI backend available (ANTHROPIC_API_KEY not set)',
-    };
-  }
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: persona.systemPrompt,
-        messages: [
-          { role: 'user', content: message },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Anthropic error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    return {
-      success: true,
-      response: data.content?.[0]?.text || 'No response generated',
-    };
-  } catch (error) {
-    console.error('Direct AI error:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'AI request failed',
-    };
-  }
-}
+// No direct API fallback - all requests go through OpenClaw gateway
+// Gateway uses Claude subscription token (no per-API-call charges)
