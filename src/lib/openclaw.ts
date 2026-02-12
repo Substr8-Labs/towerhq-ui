@@ -121,44 +121,45 @@ export async function getAIResponse(
 }
 
 /**
- * Direct OpenAI fallback when gateway is unavailable
+ * Direct Anthropic Claude fallback when gateway is unavailable
  */
 async function getDirectAIResponse(message: string, persona: Persona): Promise<ChatResponse> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   
   if (!apiKey) {
     return {
       success: false,
-      error: 'No AI backend available',
+      error: 'No AI backend available (ANTHROPIC_API_KEY not set)',
     };
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: persona.systemPrompt,
         messages: [
-          { role: 'system', content: persona.systemPrompt },
           { role: 'user', content: message },
         ],
-        max_tokens: 1000,
-        temperature: 0.7,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Anthropic error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     return {
       success: true,
-      response: data.choices?.[0]?.message?.content || 'No response generated',
+      response: data.content?.[0]?.text || 'No response generated',
     };
   } catch (error) {
     console.error('Direct AI error:', error);
