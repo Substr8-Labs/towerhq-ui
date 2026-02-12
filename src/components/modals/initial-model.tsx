@@ -25,7 +25,7 @@ export function InitialModel() {
 
 	const schema = z.object({
 		name: z.string().min(1, { message: "Server name is required" }),
-		imageUrl: z.string().min(1, { message: "Image URL is invalid" }),
+		imageUrl: z.string().optional(),
 	});
 	const form = useForm({
 		resolver: zodResolver(schema),
@@ -62,72 +62,11 @@ export function InitialModel() {
 				<Form {...form}>
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
 						<div className="space-y-8 px-6">
+							{/* Image upload disabled for now - UploadThing not configured */}
 							<div className="flex items-center justify-center text-center">
-								<FormField
-									control={form.control}
-									name="imageUrl"
-									render={({ field }) => (
-										<FormItem>
-											<FormControl>
-												{field?.value && field?.value?.split(".").pop() !== "pdf" ? (
-													<div className="relative h-20 w-20">
-														<Image
-															fill
-															objectFit="cover"
-															src={field.value}
-															className="rounded-full"
-															alt="Server Image"
-														/>
-														<Button
-															onClick={() => field.onChange("")}
-															type="button"
-															className="w-7 h-7  p-[.35rem] absolute bg-rose-500 hover:bg-rose-800 text-white top-0 right-0 rounded-full shadow-sm"
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																className="h-6 w-6 "
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke="currentColor"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth={2}
-																	d="M6 18L18 6M6 6l12 12"
-																/>
-															</svg>
-														</Button>
-													</div>
-												) : (
-													<UploadDropzone
-														className="mt-4  focus-visible:outline-zinc-700
-													focus-visible:outline-dashed
-													ut-button:bg-indigo-500 ut-button:text-white ut-button:hover:bg-indigo-500/90 ut-button:ut-readying:bg-indigo-500/90 ut-button:ut-uploading:bg-indigo-500/90 ut-button:after:bg-indigo-700
-													ut-label:text-zinc-700 ut-allowed-content:text-zinc-500
-													"
-														endpoint="serverImage"
-														onClientUploadComplete={(res) => {
-															field.onChange(res?.[0].url);
-															console.log("Files: ", res);
-															alert("Upload Completed");
-														}}
-														onUploadError={(error: Error) => {
-															console.log("UploadthingERROR\n", error.message);
-
-															alert(`ERROR! ${error.message}`);
-														}}
-														onUploadBegin={(name) => {
-															// Do something once upload begins
-															console.log("Uploading: ", name);
-														}}
-													/>
-												)}
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								<div className="h-20 w-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
+									{watch("name")?.[0]?.toUpperCase() || "?"}
+								</div>
 							</div>
 							<FormField
 								control={form.control}
