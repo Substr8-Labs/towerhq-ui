@@ -77,7 +77,7 @@ export function ServerHeader({ server, role }: ServerHeaderProps) {
 				)}
 				{isAdmin && (
 					<DropdownMenuItem onClick={handleServerSettingsClick} className="text-sm px-3 py-2 cursor-pointer">
-						Server Settings
+						Project Settings
 						<Settings className="w-4 h-4 ml-auto" />
 					</DropdownMenuItem>
 				)}
@@ -96,7 +96,7 @@ export function ServerHeader({ server, role }: ServerHeaderProps) {
 						onClick={handleDeleteServerClick}
 						className="text-rose-500 text-sm px-3 py-2 cursor-pointer"
 					>
-						Delete Server
+						Delete Project
 						<TrashIcon className="w-4 h-4 ml-auto" />
 					</DropdownMenuItem>
 				)}
@@ -105,7 +105,7 @@ export function ServerHeader({ server, role }: ServerHeaderProps) {
 						onClick={handleLeaveServerClick}
 						className="text-rose-500 text-sm px-3 py-2 cursor-pointer"
 					>
-						Leave Server
+						Leave Project
 						<LogOut className="w-4 h-4 ml-auto" />
 					</DropdownMenuItem>
 				)}

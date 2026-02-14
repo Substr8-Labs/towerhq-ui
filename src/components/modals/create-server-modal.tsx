@@ -30,7 +30,7 @@ export function CreateServerModal() {
     const isModelOpen = isOpen && type === "createServer";
 
 	const schema = z.object({
-		name: z.string().min(1, { message: "Server name is required" }),
+		name: z.string().min(1, { message: "Project name is required" }),
 		imageUrl: z.string().optional(),
 	});
 	const form = useForm({
@@ -64,9 +64,9 @@ export function CreateServerModal() {
 		<Dialog open={isModelOpen} onOpenChange={handleClose}>
 			<DialogContent className="bg-white text-black p-0 overflow-hidden">
 				<DialogHeader className="pt-8 px-6">
-					<DialogTitle className="text-2xl text-center font-bold">Customize your server</DialogTitle>
+					<DialogTitle className="text-2xl text-center font-bold">Start a new project</DialogTitle>
 					<DialogDescription className="text-center text-zinc-500">
-						Give your sever a personality with a name and an image. You can always change these later.
+						Give your project a name and optional image. Ori will help you set things up.
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
@@ -145,14 +145,14 @@ export function CreateServerModal() {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-											Server name
+											Project name
 										</FormLabel>
 
 										<FormControl>
 											<Input
 												disabled={isLoading}
 												className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-												placeholder="Enter server name"
+												placeholder="e.g., Subscription box for pet owners"
 												{...field}
 											/>
 										</FormControl>
@@ -163,7 +163,7 @@ export function CreateServerModal() {
 						</div>
 						<DialogFooter className="bg-gray-100 px-6 py-4">
 							<Button type="submit" variant="primary" disabled={isLoading} className="w-full">
-								Create server
+								🌟 Start Project
 							</Button>
 						</DialogFooter>
 					</form>

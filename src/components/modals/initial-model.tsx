@@ -24,7 +24,7 @@ export function InitialModel() {
 	const router = useRouter();
 
 	const schema = z.object({
-		name: z.string().min(1, { message: "Server name is required" }),
+		name: z.string().min(1, { message: "Project name is required" }),
 		imageUrl: z.string().optional(),
 	});
 	const form = useForm({
@@ -54,9 +54,9 @@ export function InitialModel() {
 		<Dialog open>
 			<DialogContent className="bg-white text-black p-0 overflow-hidden">
 				<DialogHeader className="pt-8 px-6">
-					<DialogTitle className="text-2xl text-center font-bold">Customize your server</DialogTitle>
+					<DialogTitle className="text-2xl text-center font-bold">🌟 Welcome to Control Tower</DialogTitle>
 					<DialogDescription className="text-center text-zinc-500">
-						Give your sever a personality with a name and an image. You can always change these later.
+						Start your first project. Tell us what you're building and we'll assemble your AI executive team.
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
@@ -74,14 +74,14 @@ export function InitialModel() {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-											Server name
+											What are you building?
 										</FormLabel>
 
 										<FormControl>
 											<Input
 												disabled={isLoading}
 												className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-												placeholder="Enter server name"
+												placeholder="e.g., Subscription box for pet owners"
 												{...field}
 											/>
 										</FormControl>
@@ -92,7 +92,7 @@ export function InitialModel() {
 						</div>
 						<DialogFooter className="bg-gray-100 px-6 py-4">
 							<Button type="submit" variant="primary" disabled={isLoading} className="w-full">
-								Create server
+								🚀 Start Project
 							</Button>
 						</DialogFooter>
 					</form>

@@ -78,9 +78,9 @@ export function EditServerModal() {
 		<Dialog open={isModelOpen} onOpenChange={handleClose}>
 			<DialogContent className="bg-white text-black p-0 overflow-hidden">
 				<DialogHeader className="pt-8 px-6">
-					<DialogTitle className="text-2xl text-center font-bold">Customize your server</DialogTitle>
+					<DialogTitle className="text-2xl text-center font-bold">Project Settings</DialogTitle>
 					<DialogDescription className="text-center text-zinc-500">
-						Give your sever a personality with a name and an image. You can always change these later.
+						Update your project name and image.
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
