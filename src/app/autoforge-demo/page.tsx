@@ -1,12 +1,11 @@
-import LandingPage from '@/components/autoforge/LandingPage';
-import type { LandingPageProps } from '@/components/autoforge/types';
+import LandingPage, { type LandingPageComponentProps } from '@/components/autoforge/LandingPage';
 
 /**
  * Demo page showcasing the LandingPage component with sample data.
  * This serves as both a visual testing page and usage example.
  */
 
-const demoProps: LandingPageProps = {
+const demoProps: LandingPageComponentProps = {
   hero: {
     headline: 'Ship Products Faster with AI-Powered Development',
     subheadline:
