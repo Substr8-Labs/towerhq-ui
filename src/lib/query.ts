@@ -123,8 +123,19 @@ export async function getAllServers(id: string) {
 				},
 			},
 		},
+		include: {
+			channels: {
+				select: { id: true },
+			},
+			members: {
+				select: { id: true },
+			},
+		},
+		orderBy: {
+			createdAt: 'desc',
+		},
 	});
-	if (servers) return servers;
+	return servers || [];
 }
 
 export async function getFirstServer(id: string) {
