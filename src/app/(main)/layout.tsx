@@ -2,7 +2,7 @@ import { SideBar } from "@/components/layout/side-bar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "Discord Clone",
+	title: "TowerHQ",
 	description:
 		"A Full-Featured Real Time (Video , Audio , Chat) Application",
 	openGraph: {

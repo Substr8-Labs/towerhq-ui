@@ -14,7 +14,7 @@ import { extractRouterConfig } from "uploadthing/server";
 const open_sans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Discord Clone",
+	title: "TowerHQ - AI Executive Team",
 	description: "A Full-Featured Real Time (Video , Audio , Chat) Application",
 	openGraph: {
 		type: "website",
@@ -50,7 +50,7 @@ export default function RootLayout({
 						attribute="class"
 						defaultTheme="dark"
 						enableSystem={false}
-						storageKey="discord-clone-theme"
+						storageKey="towerhq-theme"
 						disableTransitionOnChange
 					>
 						<NextSSRPlugin
