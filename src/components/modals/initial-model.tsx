@@ -62,12 +62,19 @@ export function InitialModel() {
 				<Form {...form}>
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
 						<div className="space-y-8 px-6">
-							{/* Image upload disabled for now - UploadThing not configured */}
-							<div className="flex items-center justify-center text-center">
-								<div className="h-20 w-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
-									{watch("name")?.[0]?.toUpperCase() || "?"}
+							{/* Team preview */}
+							<div className="flex items-center justify-center gap-2 text-center">
+								<div className="flex -space-x-2">
+									<div className="h-10 w-10 rounded-full bg-amber-500 flex items-center justify-center text-white text-lg border-2 border-white" title="Ori - Concierge">🌟</div>
+									<div className="h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center text-white text-lg border-2 border-white" title="Ada - CTO">✦</div>
+									<div className="h-10 w-10 rounded-full bg-pink-500 flex items-center justify-center text-white text-lg border-2 border-white" title="Grace - CPO">🚀</div>
+									<div className="h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center text-white text-lg border-2 border-white" title="Tony - CMO">🔥</div>
+									<div className="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center text-white text-lg border-2 border-white" title="Val - CFO">📊</div>
 								</div>
 							</div>
+							<p className="text-center text-xs text-zinc-400">
+								Your AI executive team: Ori (Concierge) • Ada (CTO) • Grace (CPO) • Tony (CMO) • Val (CFO)
+							</p>
 							<FormField
 								control={form.control}
 								name="name"
