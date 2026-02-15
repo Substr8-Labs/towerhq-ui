@@ -13,7 +13,7 @@ import { z } from 'zod';
 
 export const maxDuration = 120; // Allow longer for forge jobs
 
-const AUTOFORGE_API = process.env.AUTOFORGE_API_URL || 'http://localhost:8420';
+const AUTOFORGE_API = process.env.AUTOFORGE_API_URL || 'http://72.61.7.108:8420';
 
 // Persona system prompts
 const PERSONAS: Record<string, string> = {

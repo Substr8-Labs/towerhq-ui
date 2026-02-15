@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Loader2, CheckCircle, XCircle, Sparkles, Download } from 'lucide-react';
 
-const AUTOFORGE_API = process.env.NEXT_PUBLIC_AUTOFORGE_API_URL || 'http://localhost:8420';
+const AUTOFORGE_API = process.env.NEXT_PUBLIC_AUTOFORGE_API_URL || 'http://72.61.7.108:8420';
 
 interface ForgeJob {
   id: string;
