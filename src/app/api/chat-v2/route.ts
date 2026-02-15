@@ -1,39 +1,33 @@
 /**
- * TowerHQ Chat API v2 - AI SDK with AutoForge Integration
+ * TowerHQ Chat API v2 - Workspace-Aware Personas
  * 
- * Uses Vercel AI SDK with tool calling for:
- * - Natural conversation with personas
- * - AutoForge build capability via forge() tool
- * - Streaming responses with progress updates
+ * Uses workspace files to build dynamic persona prompts,
+ * following the OpenClaw pattern.
  */
 
 import { streamText, tool } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { z } from 'zod';
+import { auth } from '@clerk/nextjs/server';
+import { db } from '@/lib/db';
+import { assemblePersonaPrompt } from '@/lib/workspace/prompt-assembler';
 
-export const maxDuration = 120; // Allow longer for forge jobs
+export const maxDuration = 120;
 
 const AUTOFORGE_API = process.env.AUTOFORGE_API_URL || 'http://72.61.7.108:8420';
 
-// Persona system prompts
-const PERSONAS: Record<string, string> = {
-  ada: `You are Ada, the CTO of Control Tower. You are technical, direct, and helpful.
-When users need something built, use the forge tool to create it.
-You can build: landing pages, marketing campaigns, pitch decks, email sequences.`,
-  
-  grace: `You are Grace, the Head of Product at Control Tower. You focus on user needs,
-product strategy, and shipping value. When users need artifacts built, defer to Ada
-or use the forge tool directly if appropriate.`,
-  
-  tony: `You are Tony, the Head of Marketing. You're creative, persuasive, and focused
-on messaging. When users need marketing materials, landing pages, or campaigns,
-you can use the forge tool to create them.`,
-  
-  val: `You are Val, the Head of Operations. You focus on processes, efficiency, and
-getting things done. You can coordinate with other personas or use tools as needed.`,
-};
+/**
+ * Get profile for current user
+ */
+async function getProfile(userId: string) {
+  return db.profile.findUnique({
+    where: { userId },
+  });
+}
 
-// Tool: Call AutoForge to build artifacts
+/**
+ * Call AutoForge to build artifacts
+ */
 async function callAutoForge(brief: string, type: string): Promise<{
   jobId: string;
   status: string;
@@ -41,7 +35,6 @@ async function callAutoForge(brief: string, type: string): Promise<{
   artifactUrl?: string;
 }> {
   try {
-    // Start the job
     const startResponse = await fetch(`${AUTOFORGE_API}/api/forge`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -55,8 +48,7 @@ async function callAutoForge(brief: string, type: string): Promise<{
     const job = await startResponse.json();
     const jobId = job.id;
     
-    // Poll for completion (with timeout)
-    const maxWait = 90000; // 90 seconds
+    const maxWait = 90000;
     const pollInterval = 2000;
     const startTime = Date.now();
     
@@ -101,9 +93,37 @@ async function callAutoForge(brief: string, type: string): Promise<{
 
 export async function POST(req: Request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401 }
+      );
+    }
+
     const { messages, persona = 'ada' } = await req.json();
     
-    const systemPrompt = PERSONAS[persona] || PERSONAS.ada;
+    // Get profile
+    const profile = await getProfile(userId);
+    
+    // Build persona prompt from workspace files
+    let systemPrompt: string;
+    
+    if (profile) {
+      // Use workspace-based prompt
+      systemPrompt = await assemblePersonaPrompt(profile.id, persona);
+      
+      // Add base instructions
+      systemPrompt += `\n\n---\n\n## Instructions
+- Be helpful, direct, and specific
+- Reference the founder's context when relevant
+- When they need something built, use the forge tool
+- Stay in character as ${persona.charAt(0).toUpperCase() + persona.slice(1)}
+`;
+    } else {
+      // Fallback for users without profile
+      systemPrompt = getDefaultPrompt(persona);
+    }
     
     const result = streamText({
       model: anthropic('claude-sonnet-4-20250514'),
@@ -124,7 +144,7 @@ Use this when the user asks you to create, build, or generate something.`,
           },
         }),
       },
-      maxSteps: 3, // Allow multiple tool calls if needed
+      maxSteps: 3,
     });
     
     return result.toDataStreamResponse();
@@ -136,4 +156,26 @@ Use this when the user asks you to create, build, or generate something.`,
       { status: 500 }
     );
   }
+}
+
+/**
+ * Fallback prompts for users without workspace
+ */
+function getDefaultPrompt(persona: string): string {
+  const defaults: Record<string, string> = {
+    ada: `You are Ada, the CTO of Control Tower. You are technical, direct, and helpful.
+When users need something built, use the forge tool to create it.
+You can build: landing pages, marketing campaigns, pitch decks, email sequences.`,
+    
+    grace: `You are Grace, the Head of Product at Control Tower. You focus on user needs,
+product strategy, and shipping value. When users need artifacts built, use the forge tool.`,
+    
+    tony: `You are Tony, the Head of Marketing. You're creative, persuasive, and focused
+on messaging. When users need marketing materials, use the forge tool to create them.`,
+    
+    val: `You are Val, the Head of Operations. You focus on processes, efficiency, and
+getting things done. You can coordinate with other personas or use tools as needed.`,
+  };
+
+  return defaults[persona] || defaults.ada;
 }

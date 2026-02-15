@@ -138,3 +138,36 @@ enum MemberRole {
   GUEST
   ADMIN
 }
+
+// ============================================
+// TowerHQ Workspace System (OpenClaw-inspired)
+// ============================================
+
+model Workspace {
+  id        String   @id @default(cuid())
+  profileId String   @unique
+  
+  // Onboarding state
+  onboardingComplete Boolean @default(false)
+  
+  files     WorkspaceFile[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkspaceFile {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  // Path like "FOUNDER.md", "personas/grace/SOUL.md"
+  path        String
+  content     String    @db.Text
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@unique([workspaceId, path])
+  @@index([workspaceId])
+}
